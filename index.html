@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bike Rental - Аренда велосипедов</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .auth-section {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .auth-section input {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #ff5252;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #4ecdc4;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #26a69a;
+        }
+
+        /* Main Content */
+        .hero {
+            background: url('https://images.unsplash.com/photo-1488646953014-85cb44e25828?ixlib=rb-4.0.3') center/cover;
+            color: white;
+            text-align: center;
+            padding: 100px 0;
+            position: relative;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Auth Section */
+        .auth-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .form-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            flex: 1;
+        }
+
+        .tab.active {
+            border-bottom: 2px solid #667eea;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Bikes Grid */
+        .bikes-section {
+            padding: 50px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 2rem;
+            color: #333;
+        }
+
+        .bikes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .bike-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .bike-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .bike-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .bike-info {
+            padding: 20px;
+        }
+
+        .bike-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .bike-description {
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .bike-price {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #ff6b6b;
+            margin-bottom: 15px;
+        }
+
+        .bike-status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .status-available {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-unavailable {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        /* Rental Form */
+        .rental-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .price-summary {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+
+        /* My Rentals */
+        .rentals-section {
+            padding: 50px 0;
+            background: white;
+        }
+
+        .rentals-list {
+            display: grid;
+            gap: 20px;
+        }
+
+        .rental-item {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .rental-status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .status-active {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-completed {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .status-canceled {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        /* User Info */
+        .user-info {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        /* Notifications */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 5px;
+            color: white;
+            z-index: 1001;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            background: #28a745;
+        }
+
+        .notification.error {
+            background: #dc3545;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .bikes-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">🚴 BikeRental</div>
+                <div class="auth-section">
+                    <div id="userInfo" style="display: none;">
+                        <span id="userName"></span>
+                        <button class="btn btn-secondary" onclick="logout()">Выйти</button>
+                    </div>
+                    <div id="authButtons">
+                        <button class="btn btn-primary" onclick="openAuthModal()">Войти / Регистрация</button>
+                    </div>
+                    <button class="btn btn-secondary" onclick="loadBikes()">Обновить</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Аренда велосипедов</h1>
+                <p>Выберите свой идеальный велосипед для прогулки по городу</p>
+                <button class="btn btn-primary" onclick="loadBikes()">Смотреть велосипеды</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- User Info -->
+    <div class="container">
+        <div id="userInfoPanel" class="user-info">
+            <h3>Добро пожаловать, <span id="displayUserName"></span>!</h3>
+            <button class="btn btn-secondary" onclick="loadMyRentals()">Мои аренды</button>
+        </div>
+    </div>
+
+    <!-- Bikes Section -->
+    <section class="bikes-section">
+        <div class="container">
+            <h2 class="section-title">Доступные велосипеды</h2>
+            <div id="bikesGrid" class="bikes-grid">
+                <!-- Bikes will be loaded here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- My Rentals Section -->
+    <section class="rentals-section" id="rentalsSection" style="display: none;">
+        <div class="container">
+            <h2 class="section-title">Мои аренды</h2>
+            <div id="rentalsList" class="rentals-list">
+                <!-- Rentals will be loaded here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Auth Modal -->
+    <div id="authModal" class="auth-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Вход / Регистрация</h3>
+                <button class="close-modal" onclick="closeAuthModal()">×</button>
+            </div>
+
+            <div class="form-tabs">
+                <button class="tab active" onclick="switchTab('login')">Вход</button>
+                <button class="tab" onclick="switchTab('register')">Регистрация</button>
+            </div>
+
+            <form id="loginForm" class="tab-content active">
+                <div class="form-group">
+                    <label for="loginEmail">Email:</label>
+                    <input type="email" id="loginEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Пароль:</label>
+                    <input type="password" id="loginPassword" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Войти</button>
+            </form>
+
+            <form id="registerForm" class="tab-content">
+                <div class="form-group">
+                    <label for="registerName">Имя:</label>
+                    <input type="text" id="registerName" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerEmail">Email:</label>
+                    <input type="email" id="registerEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerPassword">Пароль:</label>
+                    <input type="password" id="registerPassword" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Зарегистрироваться</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Rental Modal -->
+    <div id="rentalModal" class="rental-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Арендовать велосипед</h3>
+                <button class="close-modal" onclick="closeRentalModal()">×</button>
+            </div>
+            <form id="rentalForm">
+                <input type="hidden" id="selectedBikeId">
+                <div class="form-group">
+                    <label for="startTime">Время начала:</label>
+                    <input type="datetime-local" id="startTime" required>
+                </div>
+                <div class="form-group">
+                    <label for="endTime">Время окончания:</label>
+                    <input type="datetime-local" id="endTime" required>
+                </div>
+                <div class="price-summary">
+                    <h4>Расчет стоимости:</h4>
+                    <p id="priceCalculation">Выберите время для расчета стоимости</p>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Арендовать</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div id="notification" class="notification"></div>
+
+    <script>
+        const AUTH_API_BASE = 'http://localhost:8001'; // Auth service
+        const RENTAL_API_BASE = 'http://localhost:8003'; // Rental service
+        const BIKE_API_BASE = 'http://localhost:8002'; // Bike service
+
+        let currentBikes = [];
+        let currentUser = null;
+        let authToken = localStorage.getItem('authToken');
+
+        // Load bikes on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is already logged in
+            if (authToken) {
+                verifyToken();
+            }
+            loadBikes();
+            setupDateTimeInputs();
+            setupAuthForms();
+        });
+
+        function setupAuthForms() {
+            document.getElementById('loginForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                await login();
+            });
+
+            document.getElementById('registerForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                await register();
+            });
+        }
+
+        async function verifyToken() {
+            try {
+                const response = await fetch(`${AUTH_API_BASE}/users/me`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+
+                if (response.ok) {
+                    currentUser = await response.json();
+                    showUserInfo();
+                    showNotification('Авторизация успешна', 'success');
+                } else {
+                    logout();
+                }
+            } catch (error) {
+                console.error('Token verification failed:', error);
+                logout();
+            }
+        }
+
+        async function login() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            try {
+                const response = await fetch(`${AUTH_API_BASE}/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        password: password
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    authToken = data.access_token;
+                    localStorage.setItem('authToken', authToken);
+
+                    // Get user info
+                    const userResponse = await fetch(`${AUTH_API_BASE}/users/me`, {
+                        headers: {
+                            'Authorization': `Bearer ${authToken}`
+                        }
+                    });
+
+                    currentUser = await userResponse.json();
+                    showUserInfo();
+                    closeAuthModal();
+                    showNotification('Вход выполнен успешно!', 'success');
+                } else {
+                    const error = await response.json();
+                    showNotification(`Ошибка входа: ${error.detail}`, 'error');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                showNotification('Ошибка при входе', 'error');
+            }
+        }
+
+        async function register() {
+            const name = document.getElementById('registerName').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+
+            try {
+                const response = await fetch(`${AUTH_API_BASE}/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        full_name: name,
+                        password: password,
+                        is_admin: false
+                    })
+                });
+
+                if (response.ok) {
+                    showNotification('Регистрация успешна! Теперь войдите в систему.', 'success');
+                    switchTab('login');
+                    // Pre-fill login form
+                    document.getElementById('loginEmail').value = email;
+                } else {
+                    const error = await response.json();
+                    showNotification(`Ошибка регистрации: ${error.detail}`, 'error');
+                }
+            } catch (error) {
+                console.error('Registration error:', error);
+                showNotification('Ошибка при регистрации', 'error');
+            }
+        }
+
+        function logout() {
+            currentUser = null;
+            authToken = null;
+            localStorage.removeItem('authToken');
+            hideUserInfo();
+            showNotification('Вы вышли из системы', 'success');
+        }
+
+        function showUserInfo() {
+            document.getElementById('userInfo').style.display = 'block';
+            document.getElementById('authButtons').style.display = 'none';
+            document.getElementById('userInfoPanel').style.display = 'block';
+            document.getElementById('displayUserName').textContent = currentUser.full_name;
+            document.getElementById('userName').textContent = currentUser.full_name;
+        }
+
+        function hideUserInfo() {
+            document.getElementById('userInfo').style.display = 'none';
+            document.getElementById('authButtons').style.display = 'block';
+            document.getElementById('userInfoPanel').style.display = 'none';
+        }
+
+        function openAuthModal() {
+            document.getElementById('authModal').style.display = 'flex';
+        }
+
+        function closeAuthModal() {
+            document.getElementById('authModal').style.display = 'none';
+        }
+
+        function switchTab(tabName) {
+            // Update tabs
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+            document.querySelector(`.tab:nth-child(${tabName === 'login' ? 1 : 2})`).classList.add('active');
+            document.getElementById(tabName === 'login' ? 'loginForm' : 'registerForm').classList.add('active');
+        }
+
+        function setupDateTimeInputs() {
+            const now = new Date();
+            const startTime = document.getElementById('startTime');
+            const endTime = document.getElementById('endTime');
+
+            // Set min time to current time
+            startTime.min = now.toISOString().slice(0, 16);
+            endTime.min = now.toISOString().slice(0, 16);
+
+            // Set default start time to now
+            startTime.value = now.toISOString().slice(0, 16);
+
+            // Set default end time to 1 hour from now
+            const oneHourLater = new Date(now.getTime() + 60 * 60 * 1000);
+            endTime.value = oneHourLater.toISOString().slice(0, 16);
+
+            // Add event listeners for price calculation
+            startTime.addEventListener('change', calculatePrice);
+            endTime.addEventListener('change', calculatePrice);
+        }
+
+        async function loadBikes() {
+            try {
+                showNotification('Загружаем список велосипедов...', 'success');
+                const response = await fetch(`${BIKE_API_BASE}/bikes/`);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const bikes = await response.json();
+
+                currentBikes = bikes;
+                displayBikes(bikes);
+                showNotification('Список велосипедов обновлен', 'success');
+
+                // Hide rentals section
+                document.getElementById('rentalsSection').style.display = 'none';
+            } catch (error) {
+                console.error('Error loading bikes:', error);
+                showNotification('Ошибка загрузки велосипедов', 'error');
+            }
+        }
+
+        function displayBikes(bikes) {
+            const grid = document.getElementById('bikesGrid');
+            grid.innerHTML = '';
+
+            if (bikes.length === 0) {
+                grid.innerHTML = '<p>Нет доступных велосипедов</p>';
+                return;
+            }
+
+            bikes.forEach(bike => {
+                const bikeCard = document.createElement('div');
+                bikeCard.className = 'bike-card';
+                bikeCard.innerHTML = `
+                    <img src="${bike.image_url || 'https://via.placeholder.com/300x200?text=No+Image'}"
+                         alt="${bike.name}" class="bike-image">
+                    <div class="bike-info">
+                        <div class="bike-name">${bike.name}</div>
+                        <div class="bike-description">${bike.description}</div>
+                        <div class="bike-price">${bike.price_per_hour} ₽/час</div>
+                        <div>
+                            <span class="bike-status ${bike.is_available ? 'status-available' : 'status-unavailable'}">
+                                ${bike.is_available ? 'Доступен' : 'Занят'}
+                            </span>
+                        </div>
+                        <button class="btn btn-primary"
+                                onclick="openRentalModal(${bike.id})"
+                                ${!bike.is_available ? 'disabled' : ''}
+                                ${!authToken ? 'disabled' : ''}
+                                style="margin-top: 15px; width: 100%;">
+                            ${!authToken ? 'Войдите для аренды' : (bike.is_available ? 'Арендовать' : 'Недоступен')}
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(bikeCard);
+            });
+        }
+
+        function openRentalModal(bikeId) {
+            if (!authToken) {
+                showNotification('Пожалуйста, войдите в систему для аренды', 'error');
+                openAuthModal();
+                return;
+            }
+
+            const bike = currentBikes.find(b => b.id === bikeId);
+            if (!bike) return;
+
+            document.getElementById('selectedBikeId').value = bikeId;
+            document.getElementById('rentalModal').style.display = 'flex';
+            calculatePrice();
+        }
+
+        function closeRentalModal() {
+            document.getElementById('rentalModal').style.display = 'none';
+        }
+
+        function calculatePrice() {
+            const startTime = document.getElementById('startTime').value;
+            const endTime = document.getElementById('endTime').value;
+            const bikeId = document.getElementById('selectedBikeId').value;
+
+            if (!startTime || !endTime || !bikeId) return;
+
+            const bike = currentBikes.find(b => b.id === parseInt(bikeId));
+            if (!bike) return;
+
+            const start = new Date(startTime);
+            const end = new Date(endTime);
+            const hours = (end - start) / (1000 * 60 * 60);
+
+            if (hours <= 0) {
+                document.getElementById('priceCalculation').textContent = 'Некорректное время';
+                return;
+            }
+
+            const totalPrice = hours * bike.price_per_hour;
+            document.getElementById('priceCalculation').textContent =
+                `${hours.toFixed(1)} часов × ${bike.price_per_hour} ₽/час = ${totalPrice.toFixed(2)} ₽`;
+        }
+
+        document.getElementById('rentalForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            if (!authToken) {
+                showNotification('Пожалуйста, войдите в систему', 'error');
+                return;
+            }
+
+            const bikeId = document.getElementById('selectedBikeId').value;
+            const startTime = document.getElementById('startTime').value;
+            const endTime = document.getElementById('endTime').value;
+
+            try {
+                const rentalData = {
+                    user_id: currentUser.id,
+                    bike_id: parseInt(bikeId),
+                    start_time: startTime + ':00',
+                    end_time: endTime + ':00'
+                };
+
+                const response = await fetch(`${RENTAL_API_BASE}/rentals/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify(rentalData)
+                });
+
+                if (response.ok) {
+                    showNotification('Велосипед успешно арендован!', 'success');
+                    closeRentalModal();
+                    loadBikes(); // Reload bikes to update availability
+                } else {
+                    const error = await response.json();
+                    showNotification(`Ошибка: ${error.detail}`, 'error');
+                }
+            } catch (error) {
+                console.error('Error creating rental:', error);
+                showNotification('Ошибка при создании аренды', 'error');
+            }
+        });
+
+        async function loadMyRentals() {
+            if (!authToken) {
+                showNotification('Пожалуйста, войдите в систему', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${RENTAL_API_BASE}/rentals/user/${currentUser.id}`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const rentals = await response.json();
+
+                displayRentals(rentals);
+                document.getElementById('rentalsSection').style.display = 'block';
+                showNotification('Мои аренды загружены', 'success');
+            } catch (error) {
+                console.error('Error loading rentals:', error);
+                showNotification('Ошибка загрузки аренд', 'error');
+            }
+        }
+
+        function displayRentals(rentals) {
+            const list = document.getElementById('rentalsList');
+            list.innerHTML = '';
+
+            if (rentals.length === 0) {
+                list.innerHTML = '<p>У вас нет активных аренд</p>';
+                return;
+            }
+
+            rentals.forEach(rental => {
+                const rentalItem = document.createElement('div');
+                rentalItem.className = 'rental-item';
+                rentalItem.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <strong>Аренда #${rental.id}</strong>
+                        <span class="rental-status ${getStatusClass(rental.status)}">
+                            ${getStatusText(rental.status)}
+                        </span>
+                    </div>
+                    <p><strong>Велосипед ID:</strong> ${rental.bike_id}</p>
+                    <p><strong>Начало:</strong> ${new Date(rental.start_time).toLocaleString()}</p>
+                    <p><strong>Планируемое окончание:</strong> ${new Date(rental.end_time).toLocaleString()}</p>
+                    <p><strong>Стоимость:</strong> ${rental.total_price.toFixed(2)} ₽</p>
+                    ${rental.actual_end_time ?
+                        `<p><strong>Фактическое окончание:</strong> ${new Date(rental.actual_end_time).toLocaleString()}</p>` : ''}
+                    ${rental.status === 'active' ?
+                        `<div style="margin-top: 10px;">
+                            <button class="btn btn-secondary" onclick="completeRental(${rental.id})" style="margin-right: 10px;">
+                                Завершить аренду
+                            </button>
+                            <button class="btn btn-primary" onclick="cancelRental(${rental.id})">
+                                Отменить аренду
+                            </button>
+                        </div>` : ''}
+                `;
+                list.appendChild(rentalItem);
+            });
+        }
+
+        function getStatusClass(status) {
+            switch(status) {
+                case 'active': return 'status-active';
+                case 'completed': return 'status-completed';
+                case 'canceled': return 'status-canceled';
+                default: return '';
+            }
+        }
+
+        function getStatusText(status) {
+            switch(status) {
+                case 'active': return 'Активна';
+                case 'completed': return 'Завершена';
+                case 'canceled': return 'Отменена';
+                default: return status;
+            }
+        }
+
+        async function completeRental(rentalId) {
+            try {
+                const response = await fetch(`${RENTAL_API_BASE}/rentals/${rentalId}/complete`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+
+                if (response.ok) {
+                    showNotification('Аренда завершена!', 'success');
+                    loadMyRentals();
+                    loadBikes();
+                } else {
+                    const error = await response.json();
+                    showNotification(`Ошибка: ${error.detail}`, 'error');
+                }
+            } catch (error) {
+                console.error('Error completing rental:', error);
+                showNotification('Ошибка при завершении аренды', 'error');
+            }
+        }
+
+        async function cancelRental(rentalId) {
+            try {
+                const response = await fetch(`${RENTAL_API_BASE}/rentals/${rentalId}/cancel`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+
+                if (response.ok) {
+                    showNotification('Аренда отменена!', 'success');
+                    loadMyRentals();
+                    loadBikes();
+                } else {
+                    const error = await response.json();
+                    showNotification(`Ошибка: ${error.detail}`, 'error');
+                }
+            } catch (error) {
+                console.error('Error canceling rental:', error);
+                showNotification('Ошибка при отмене аренды', 'error');
+            }
+        }
+
+        function showNotification(message, type) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type} show`;
+
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Close modals when clicking outside
+        window.onclick = function(event) {
+            const authModal = document.getElementById('authModal');
+            const rentalModal = document.getElementById('rentalModal');
+
+            if (event.target === authModal) {
+                closeAuthModal();
+            }
+            if (event.target === rentalModal) {
+                closeRentalModal();
+            }
+        }
+    </script>
+</body>
+</html>
