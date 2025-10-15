@@ -24,6 +24,8 @@
 2. Создайте `.env` файл в корне </br>
 3. Запустите: `docker-compose up -d`
 <details> <summary>📁 Пример .env файла (нажмите чтобы развернуть)</summary>
+
+```
 # PostgreSQL Configuration
 POSTGRES_USER=postgres
 POSTGRES_PASSWORD=your_secure_password_here
@@ -46,6 +48,7 @@ AWS_REGION=ru-7
 S3_ENDPOINT_URL=https://s3.ru-7.storage.selcloud.ru
 S3_BUCKET_NAME=your-bucket-name
 S3_ACCESS_DOMAIN=your-domain.selstorage.ru
+```
 </details>
 
 
